@@ -241,7 +241,6 @@ export default function App() {
     setShowWidgetPreviewModal(false);
   };
 
-  // Crear el lienzo Canvas para la imagen de compartir
   const createShareCanvas = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 800;
@@ -315,7 +314,6 @@ export default function App() {
     setShowShareModal(false);
   };
 
-  // Compartir en WhatsApp con Texto e Imagen Novedosa
   const handleShareWhatsApp = async () => {
     const pageUrl = window.location.href;
     const textMessage = `⛽ *SURTIDO CBO - Ciudad Bolívar*\n📅 *Fecha:* ${currentData.fecha}\n🚙 *Placas Habilitadas:* Placa ${currentData.placas}\n\nℹ️ Consulta el cronograma diario de gasolina subsidiada y estaciones aquí:\n👉 ${pageUrl}`;
@@ -334,7 +332,7 @@ export default function App() {
           setShowShareModal(false);
           return;
         } catch (e) {
-          // Fallback a enlace nativo si cancela o no soporta
+          // Fallback a enlace nativo si cancela
         }
       }
       
@@ -344,10 +342,9 @@ export default function App() {
     }, 'image/png');
   };
 
-  // Activación Real de Notificaciones
   const requestNotificationPermission = async () => {
     if (!('Notification' in window)) {
-      setAlertErrorMsg('Tu navegador no soporta notificaciones de escritorio o móvil.');
+      setAlertErrorMsg('Tu navegador no soporta notificaciones.');
       return false;
     }
 
@@ -356,16 +353,16 @@ export default function App() {
       setNotificationStatus(permission);
       if (permission === 'granted') {
         new Notification('Surtido CBO', {
-          body: '¡Notificaciones activadas! Te avisaremos cuando sea momento de surtir.',
+          body: '¡Notificaciones activadas para tu surtido!',
           icon: '/logo.png'
         });
         return true;
       } else {
-        setAlertErrorMsg('Permiso de notificación denegado en tu navegador.');
+        setAlertErrorMsg('Permiso de notificación denegado.');
         return false;
       }
     } catch (e) {
-      setAlertErrorMsg('Error al solicitar permisos de notificación.');
+      setAlertErrorMsg('Error al activar notificaciones.');
       return false;
     }
   };
@@ -380,29 +377,24 @@ export default function App() {
     if (alertPeriod === 'PM') {
       if (h === 12) {
         // 12 PM mediodía
-      } else if (h > 5) {
-        setAlertErrorMsg('La hora máxima permitida es hasta las 5:30 PM.');
-        return;
-      } else if (h === 5 && m > 30) {
+      } else if (h > 5 || (h === 5 && m > 30)) {
         setAlertErrorMsg('La hora máxima permitida es hasta las 5:30 PM.');
         return;
       }
     }
 
     setAlertErrorMsg('');
-
-    // Solicitar permiso explícito del sistema
     const permissionGranted = await requestNotificationPermission();
 
     const formattedTime = `${alertHour}:${alertMinute} ${alertPeriod}`;
     const alertConfig = {
       date: alertDate,
       time: formattedTime,
-      message: alertMessage || `¡Atención! Es momento de surtir gasolina según el cronograma.`
+      message: alertMessage || `¡Atención! Es momento de surtir gasolina.`
     };
     
     localStorage.setItem('surtidoCboAlert', JSON.stringify(alertConfig));
-    setAlertSavedMsg(permissionGranted ? '¡Alerta y Notificaciones activadas con éxito!' : '¡Alerta guardada en dispositivo!');
+    setAlertSavedMsg(permissionGranted ? '¡Alerta y Notificación activadas!' : '¡Alerta guardada localmente!');
     setTimeout(() => {
       setAlertSavedMsg('');
       setShowAlertModal(false);
@@ -556,6 +548,16 @@ export default function App() {
             </div>
           </div>
 
+          {/* BLOQUE DE ANUNCIOS ADSENSE (UBICACIÓN PERMITIDA) */}
+          <div className="max-w-xl mx-auto bg-white/50 dark:bg-slate-900/50 p-2 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 text-center my-4 overflow-hidden min-h-[90px] flex items-center justify-center">
+            <ins className="adsbygoogle"
+                 style={{ display: 'block', width: '100%' }}
+                 data-ad-client="ca-pub-9793872818435027"
+                 data-ad-slot="auto"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+          </div>
+
           {/* 3. ESTACIONES DE SERVICIO SUBSIDIADAS */}
           <section className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
             
@@ -633,6 +635,27 @@ export default function App() {
               </div>
             )}
           </section>
+
+          {/* SECCIÓN EDITORIAL DE ALTO VALOR (PARA APROBACIÓN DE ADSENSE) */}
+          <section className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 space-y-4">
+            <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+              <span className="text-sky-500">ℹ️</span> Guía y Normas de Surtido en Ciudad Bolívar
+            </h2>
+            <div className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed space-y-3">
+              <p>
+                El esquema de combustible subsidiado en el estado Bolívar se organiza mediante el último número del terminal de la placa vehicular. Para optimizar el tiempo de los conductores en la capital bolivarense, la atención se distribuye en las estaciones autorizadas del municipio.
+              </p>
+              <div className="bg-slate-50 dark:bg-slate-950/60 p-3.5 rounded-xl border border-slate-200/60 dark:border-slate-800">
+                <p className="font-bold text-slate-800 dark:text-slate-100 mb-1">📋 Recomendaciones para el usuario:</p>
+                <ul className="list-disc list-inside space-y-1 text-slate-500 dark:text-slate-400">
+                  <li>Llevar la cédula de identidad laminada del titular de la huella Patria.</li>
+                  <li>Verificar la disponibilidad en la estación asignada antes de hacer la cola.</li>
+                  <li>Evitar aglomeraciones antes del inicio de la jornada matutina.</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
         </main>
       </div>
 
