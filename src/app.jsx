@@ -22,6 +22,7 @@ export default function App() {
   const [showAlertModal, setShowAlertModal] = useState(false);
   const [showWidgetPreviewModal, setShowWidgetPreviewModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showInstallGuideModal, setShowInstallGuideModal] = useState(false);
   
   // Modales Legales
   const [showAvisoLegal, setShowAvisoLegal] = useState(false);
@@ -34,6 +35,10 @@ export default function App() {
     preferencias: true
   });
 
+  // Notificaciones y PWA
+  const [notificationStatus, setNotificationStatus] = useState('default');
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+
   const [alertDate, setAlertDate] = useState('');
   const [alertHour, setAlertHour] = useState('08');
   const [alertMinute, setAlertMinute] = useState('00');
@@ -44,6 +49,23 @@ export default function App() {
 
   const [slideDirection, setSlideDirection] = useState('translate-x-0');
   const shareCardRef = useRef(null);
+
+  // Capturar evento de instalación de PWA en navegadores compatibles
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    
+    if ('Notification' in window) {
+      setNotificationStatus(Notification.permission);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
 
   const handleDateChange = (newDateStr) => {
     if (newDateStr === selectedDateStr) return;
@@ -201,17 +223,26 @@ export default function App() {
     actividad: "No hay información registrada para este día."
   };
 
-  const handleDownloadApp = () => {
-    alert("¡Instalación PWA iniciada! Puedes agregar Surtido CBO a la pantalla de inicio de tu dispositivo desde el menú de tu navegador.");
+  const handleDownloadApp = async () => {
     setIsMenuOpen(false);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choiceResult = await deferredPrompt.userChoice;
+      if (choiceResult.outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      setShowInstallGuideModal(true);
+    }
   };
 
   const handleDownloadSelectedWidget = (widgetName) => {
-    alert(`¡Has seleccionado el ${widgetName}! Configurado para tu pantalla principal.`);
+    handleGenerateShareImage();
     setShowWidgetPreviewModal(false);
   };
 
-  const handleGenerateShareImage = () => {
+  // Crear el lienzo Canvas para la imagen de compartir
+  const createShareCanvas = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 800;
     canvas.height = 600;
@@ -271,6 +302,11 @@ export default function App() {
     ctx.font = 'bold 18px sans-serif';
     ctx.fillText('Surtido CBO • Ciudad Bolívar, Venezuela', 90, 500);
 
+    return canvas;
+  };
+
+  const handleGenerateShareImage = () => {
+    const canvas = createShareCanvas();
     const imageURL = canvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.href = imageURL;
@@ -279,7 +315,62 @@ export default function App() {
     setShowShareModal(false);
   };
 
-  const handleSaveAlert = (e) => {
+  // Compartir en WhatsApp con Texto e Imagen Novedosa
+  const handleShareWhatsApp = async () => {
+    const pageUrl = window.location.href;
+    const textMessage = `⛽ *SURTIDO CBO - Ciudad Bolívar*\n📅 *Fecha:* ${currentData.fecha}\n🚙 *Placas Habilitadas:* Placa ${currentData.placas}\n\nℹ️ Consulta el cronograma diario de gasolina subsidiada y estaciones aquí:\n👉 ${pageUrl}`;
+    
+    const canvas = createShareCanvas();
+    
+    canvas.toBlob(async (blob) => {
+      if (blob && navigator.share && navigator.canShare && navigator.canShare({ files: [new File([blob], 'surtido.png', { type: 'image/png' })] })) {
+        try {
+          const file = new File([blob], `SurtidoCBO-${currentData.fecha}.png`, { type: 'image/png' });
+          await navigator.share({
+            title: 'Surtido CBO',
+            text: textMessage,
+            files: [file]
+          });
+          setShowShareModal(false);
+          return;
+        } catch (e) {
+          // Fallback a enlace nativo si cancela o no soporta
+        }
+      }
+      
+      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(textMessage)}`;
+      window.open(whatsappUrl, '_blank');
+      setShowShareModal(false);
+    }, 'image/png');
+  };
+
+  // Activación Real de Notificaciones
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) {
+      setAlertErrorMsg('Tu navegador no soporta notificaciones de escritorio o móvil.');
+      return false;
+    }
+
+    try {
+      const permission = await Notification.requestPermission();
+      setNotificationStatus(permission);
+      if (permission === 'granted') {
+        new Notification('Surtido CBO', {
+          body: '¡Notificaciones activadas! Te avisaremos cuando sea momento de surtir.',
+          icon: '/logo.png'
+        });
+        return true;
+      } else {
+        setAlertErrorMsg('Permiso de notificación denegado en tu navegador.');
+        return false;
+      }
+    } catch (e) {
+      setAlertErrorMsg('Error al solicitar permisos de notificación.');
+      return false;
+    }
+  };
+
+  const handleSaveAlert = async (e) => {
     e.preventDefault();
     if (!alertDate) return;
 
@@ -299,6 +390,10 @@ export default function App() {
     }
 
     setAlertErrorMsg('');
+
+    // Solicitar permiso explícito del sistema
+    const permissionGranted = await requestNotificationPermission();
+
     const formattedTime = `${alertHour}:${alertMinute} ${alertPeriod}`;
     const alertConfig = {
       date: alertDate,
@@ -307,12 +402,12 @@ export default function App() {
     };
     
     localStorage.setItem('surtidoCboAlert', JSON.stringify(alertConfig));
-    setAlertSavedMsg('¡Alerta configurada con éxito!');
+    setAlertSavedMsg(permissionGranted ? '¡Alerta y Notificaciones activadas con éxito!' : '¡Alerta guardada en dispositivo!');
     setTimeout(() => {
       setAlertSavedMsg('');
       setShowAlertModal(false);
       setIsMenuOpen(false);
-    }, 1500);
+    }, 1800);
   };
 
   return (
@@ -616,6 +711,47 @@ export default function App() {
         </div>
       )}
 
+      {/* MODAL GUÍA DE INSTALACIÓN PWA */}
+      {showInstallGuideModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-black text-slate-900 dark:text-white">
+                Cómo instalar Surtido CBO
+              </h3>
+              <button onClick={() => setShowInstallGuideModal(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            
+            <div className="space-y-4 text-xs text-slate-600 dark:text-slate-300">
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                <p className="font-bold text-slate-900 dark:text-white mb-1">📱 En Android (Chrome / Edge / Brave):</p>
+                <ol className="list-decimal list-inside space-y-1 text-slate-500 dark:text-slate-400">
+                  <li>Toca el menú de 3 puntos (⋮) en la esquina superior derecha.</li>
+                  <li>Selecciona <strong>"Añadir a la pantalla de inicio"</strong> o <strong>"Instalar aplicación"</strong>.</li>
+                </ol>
+              </div>
+
+              <div className="bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-2xl border border-slate-200/60 dark:border-slate-800">
+                <p className="font-bold text-slate-900 dark:text-white mb-1">🍏 En iPhone / iPad (Safari):</p>
+                <ol className="list-decimal list-inside space-y-1 text-slate-500 dark:text-slate-400">
+                  <li>Toca el botón <strong>Compartir</strong> (icono de cuadrado con flecha abajo).</li>
+                  <li>Desplázate hacia abajo y selecciona <strong>"Añadir a la pantalla de inicio"</strong>.</li>
+                </ol>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowInstallGuideModal(false)}
+              className="w-full mt-5 py-3 bg-sky-500 hover:bg-sky-600 text-slate-950 font-black rounded-xl shadow-md active:scale-95 transition-transform text-sm"
+            >
+              ¡Entendido!
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* MODAL CONFIGURACIÓN DE COOKIES */}
       {showCookiesConfig && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
@@ -798,7 +934,7 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL DE COMPARTIR / DESCARGAR IMAGEN */}
+      {/* MODAL DE COMPARTIR / DESCARGAR IMAGEN & WHATSAPP */}
       {showShareModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full p-6 border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
@@ -809,7 +945,7 @@ export default function App() {
                   Compartir Información
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Genera una imagen lista para enviar por WhatsApp o redes
+                  Envía la información diaria por WhatsApp o descarga la imagen
                 </p>
               </div>
               <button 
@@ -851,15 +987,27 @@ export default function App() {
               </div>
             </div>
 
-            <button
-              onClick={handleGenerateShareImage}
-              className="w-full py-3 bg-sky-500 hover:bg-sky-600 text-slate-950 font-black rounded-xl shadow-md active:scale-95 transition-transform text-sm flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-              <span>Descargar Imagen para Compartir</span>
-            </button>
+            <div className="space-y-2.5">
+              <button
+                onClick={handleShareWhatsApp}
+                className="w-full py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black rounded-xl shadow-md active:scale-95 transition-transform text-sm flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+                </svg>
+                <span>Compartir por WhatsApp</span>
+              </button>
+
+              <button
+                onClick={handleGenerateShareImage}
+                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl active:scale-95 transition-transform text-xs flex items-center justify-center gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span>Solo Descargar Imagen</span>
+              </button>
+            </div>
 
           </div>
         </div>
@@ -904,7 +1052,7 @@ export default function App() {
                 <div className="text-2xl font-black text-amber-300 mb-1">Placas {currentData.placas}</div>
                 <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">{currentData.actividad}</p>
                 <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/10 text-xs font-bold text-sky-400 group-hover:underline">
-                  <span>Aplicar en Pantalla</span> &rarr;
+                  <span>Descargar Tarjeta para Pantalla</span> &rarr;
                 </div>
               </div>
 
@@ -921,7 +1069,7 @@ export default function App() {
                 <div className="text-2xl font-black text-amber-200 mb-1">Terminal: {currentData.placas}</div>
                 <p className="text-xs text-slate-200 line-clamp-2">{currentData.actividad}</p>
                 <div className="mt-4 flex items-center justify-between pt-3 border-t border-white/10 text-xs font-bold text-sky-300 group-hover:underline">
-                  <span>Aplicar en Pantalla</span> &rarr;
+                  <span>Descargar Tarjeta para Pantalla</span> &rarr;
                 </div>
               </div>
 
@@ -946,7 +1094,7 @@ export default function App() {
         </div>
       )}
 
-      {/* MODAL PARA CONFIGURAR ALERTA */}
+      {/* MODAL PARA CONFIGURAR ALERTA Y NOTIFICACIONES */}
       {showAlertModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
           <div className="bg-white dark:bg-slate-900 rounded-3xl shadow-xl max-w-sm w-full p-6 border border-slate-200 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-200">
@@ -1044,7 +1192,7 @@ export default function App() {
                 type="submit"
                 className="w-full py-3 bg-sky-500 hover:bg-sky-600 text-slate-950 font-black rounded-xl shadow-md active:scale-95 transition-transform text-sm mt-2"
               >
-                Guardar Alerta
+                Activar Notificación y Guardar
               </button>
             </form>
 
