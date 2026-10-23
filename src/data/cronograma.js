@@ -133,5 +133,50 @@ export const cronogramaMes = [
     fecha: "2026-11-06",
     placas: "6 y 7",
     actividad: "Surtido normal de combustible subsidiado."
+  },
+  {
+    fecha: "2026-11-07",
+    placas: "Libre",
+    actividad: "Sin surtido de combustible subsidiado."
+  },
+  {
+    fecha: "2026-11-08",
+    placas: "8",
+    actividad: "Toma de número para la terminal de placa 8."
+  },
+  {
+    fecha: "2026-11-09",
+    placas: "8",
+    actividad: "Surtido normal de combustible subsidiado."
+  },
+  {
+    fecha: "2026-11-10",
+    placas: "9 y 0",
+    actividad: "Toma de número para la terminal de placa 9 y 0."
+  },
+  {
+    fecha: "2026-11-11",
+    placas: "9 y 0",
+    actividad: "Surtido normal de combustible subsidiado."
+  },
+  {
+    fecha: "2026-11-12",
+    placas: "1 y 2",
+    actividad: "Toma de número para la terminal de placa 1 y 2."
+  },
+  {
+    fecha: "2026-11-13",
+    placas: "1 y 2",
+    actividad: "Surtido normal de combustible subsidiado."
+  },
+  {
+    fecha: "2026-11-14",
+    placas: "Libre",
+    actividad: "Sin surtido de combustible subsidiado."
+  },
+  {
+    fecha: "2026-11-15",
+    placas: "3 y 4",
+    actividad: "Toma de número para la terminal de placa 3 y 4."
   }
 ];
