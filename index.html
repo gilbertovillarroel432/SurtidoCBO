@@ -13,10 +13,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
-    <!-- Script Oficial de Google AdSense (Reemplaza ca-pub-XXXXXXXXXXXXXXXX con tu código) -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-     crossorigin="anonymous"></script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -61,5 +57,17 @@
     </noscript>
 
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Widget Flotante de Ko-fi -->
+    <script src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script>
+    
+    <script>
+      kofiWidgetOverlay.draw('rickky12', {
+        'type': 'floating-chat',
+        'floating-chat.donateButton.text': 'Apoyar proyecto',
+        'floating-chat.donateButton.background-color': '#00b9fe',
+        'floating-chat.donateButton.text-color': '#fff'
+      });
+   </script>
   </body>
 </html>
