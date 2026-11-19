@@ -25,158 +25,158 @@ export const estacionesSubsidiadas = [
 // Cronograma organizado por fechas
 export const cronogramaMes = [
   {
-    fecha: "2026-10-16",
-    placas: "1 y 2",
-    actividad: "Surtido normal de combustible subsidiado."
-  },
-  {
-    fecha: "2026-10-17",
-    placas: "Libre",
-    actividad: "Sin surtido de combustible subsidiado."
-  },
-  {
-    fecha: "2026-10-18",
-    placas: "3",
-    actividad: "Toma de número para la terminal de placa 3."
-  },
-  {
-    fecha: "2026-10-19",
-    placas: "3",
-    actividad: "Surtido normal de combustible subsidiado."
-  },
-  {
-    fecha: "2026-10-20",
-    placas: "4 y 5",
-    actividad: "Toma de número para la terminal de placa 4 y 5."
-  },
-  {
-    fecha: "2026-10-21",
-    placas: "4 y 5",
-    actividad: "Surtido normal de combustible subsidiado."
-  },
-  {
-    fecha: "2026-10-22",
+    fecha: "2026-11-19",
     placas: "6 y 7",
     actividad: "Toma de número para la terminal de placa 6 y 7."
   },
   {
-    fecha: "2026-10-23",
+    fecha: "2026-11-20",
     placas: "6 y 7",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-10-24",
+    fecha: "2026-11-21",
     placas: "Libre",
     actividad: "Sin surtido de combustible subsidiado."
   },
   {
-    fecha: "2026-10-25",
+    fecha: "2026-11-22",
     placas: "8",
-    actividad: "Toma de número para la terminal de placa 8."
+    actividad: "Toma de número para la terminal de placa 8"
   },
   {
-    fecha: "2026-10-26",
+    fecha: "2026-11-23",
     placas: "8",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-10-27",
+    fecha: "2026-11-24",
     placas: "9 y 0",
     actividad: "Toma de número para la terminal de placa 9 y 0."
   },
   {
-    fecha: "2026-10-28",
-    placas: "9 y 0",
+    fecha: "2026-11-25",
+    placas: "9  y 0",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-10-29",
+    fecha: "2026-11-26",
     placas: "1 y 2",
     actividad: "Toma de número para la terminal de placa 1 y 2."
   },
   {
-    fecha: "2026-10-30",
+    fecha: "2026-11-27",
     placas: "1 y 2",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-10-31",
+    fecha: "2026-11-28",
     placas: "Libre",
     actividad: "Sin surtido de combustible subsidiado."
   },
   {
-    fecha: "2026-11-01",
+    fecha: "2026-11-29",
     placas: "3",
     actividad: "Toma de número para la terminal de placa 3."
   },
   {
-    fecha: "2026-11-02",
+    fecha: "2026-11-30",
     placas: "3",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-11-03",
+    fecha: "2026-12-01",
     placas: "4 y 5",
-    actividad: "Toma de número para la terminal de placa 4 y 5."
+    actividad: "Toma de número para la terminal de placa 4 y 5"
   },
   {
-    fecha: "2026-11-04",
+    fecha: "2026-12-02",
     placas: "4 y 5",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-11-05",
+    fecha: "2026-12-03",
     placas: "6 y 7",
     actividad: "Toma de número para la terminal de placa 6 y 7."
   },
   {
-    fecha: "2026-11-06",
+    fecha: "2026-12-04",
     placas: "6 y 7",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-11-07",
+    fecha: "2026-12-05",
     placas: "Libre",
     actividad: "Sin surtido de combustible subsidiado."
   },
   {
-    fecha: "2026-11-08",
+    fecha: "2026-12-06",
     placas: "8",
     actividad: "Toma de número para la terminal de placa 8."
   },
   {
-    fecha: "2026-11-09",
+    fecha: "2026-12-07",
     placas: "8",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-11-10",
+    fecha: "2026-12-08",
     placas: "9 y 0",
     actividad: "Toma de número para la terminal de placa 9 y 0."
   },
   {
-    fecha: "2026-11-11",
+    fecha: "2026-12-09",
     placas: "9 y 0",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-11-12",
+    fecha: "2026-12-10",
     placas: "1 y 2",
     actividad: "Toma de número para la terminal de placa 1 y 2."
   },
   {
-    fecha: "2026-11-13",
+    fecha: "2026-12-11",
     placas: "1 y 2",
     actividad: "Surtido normal de combustible subsidiado."
   },
   {
-    fecha: "2026-11-14",
+    fecha: "2026-12-12",
     placas: "Libre",
     actividad: "Sin surtido de combustible subsidiado."
   },
   {
-    fecha: "2026-11-15",
-    placas: "3 y 4",
-    actividad: "Toma de número para la terminal de placa 3 y 4."
+    fecha: "2026-12-13",
+    placas: "3",
+    actividad: "Toma de número para la terminal de placa 3."
+  },
+  {
+    fecha: "2026-12-14",
+    placas: "3",
+    actividad: "Surtido normal de combustible subsidiado."
+  },
+  {
+    fecha: "2026-12-15",
+    placas: "4 y 5",
+    actividad: "Toma de número para la terminal de placa 4 y 5."
+  },
+  {
+    fecha: "2026-12-16",
+    placas: "4 y 5",
+    actividad: "Surtido normal de combustible subsidiado"
+  },
+  {
+    fecha: "2026-12-17",
+    placas: "6 y 7",
+    actividad: "Toma de número para la terminal de placa 6 y 7."
+  },
+  {
+    fecha: "2026-12-18",
+    placas: "6 y 7",
+    actividad: "Surtido normal de combustible subsidiado."
+  },
+  {
+    fecha: "2026-12-19",
+    placas: "Libre",
+    actividad: "Sin surtido de combustible subsidiado"
   }
 ];
