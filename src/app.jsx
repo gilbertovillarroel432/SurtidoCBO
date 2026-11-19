@@ -24,6 +24,9 @@ export default function App() {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showInstallGuideModal, setShowInstallGuideModal] = useState(false);
   
+  // Estado para confirmar copiado de Binance Pay ID
+  const [binanceCopied, setBinanceCopied] = useState(false);
+
   // Modales Legales
   const [showAvisoLegal, setShowAvisoLegal] = useState(false);
   const [showPrivacidad, setShowPrivacidad] = useState(false);
@@ -50,7 +53,6 @@ export default function App() {
   const [slideDirection, setSlideDirection] = useState('translate-x-0');
   const shareCardRef = useRef(null);
 
-  // Capturar evento de instalación de PWA en navegadores compatibles
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
@@ -66,6 +68,14 @@ export default function App() {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
   }, []);
+
+  const handleCopyBinanceId = () => {
+    navigator.clipboard.writeText('53539411');
+    setBinanceCopied(true);
+    setTimeout(() => {
+      setBinanceCopied(false);
+    }, 2500);
+  };
 
   const handleDateChange = (newDateStr) => {
     if (newDateStr === selectedDateStr) return;
@@ -332,7 +342,7 @@ export default function App() {
           setShowShareModal(false);
           return;
         } catch (e) {
-          // Fallback a enlace nativo si cancela
+          // Fallback a enlace nativo
         }
       }
       
@@ -548,33 +558,49 @@ export default function App() {
             </div>
           </div>
 
-          {/* TARJETA DE APOYO KO-FI (REEMPLAZA EL BLOQUE VACÍO) */}
-          <div className="bg-gradient-to-r from-sky-500/10 via-cyan-500/10 to-blue-500/10 dark:from-sky-950/50 dark:via-slate-900 dark:to-cyan-950/40 rounded-2xl p-5 border border-sky-200/80 dark:border-sky-800/60 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-            <div className="text-center sm:text-left space-y-1">
+          {/* TARJETA DE APOYO AL PROYECTO: KO-FI Y BINANCE PAY */}
+          <div className="bg-gradient-to-br from-sky-500/10 via-slate-100 to-amber-500/10 dark:from-sky-950/40 dark:via-slate-900 dark:to-amber-950/30 rounded-2xl p-5 border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4">
+            <div className="space-y-1 text-center sm:text-left">
               <div className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-sky-600 dark:text-sky-400">
-                <span>☕ Proyecto Comunitario</span>
+                <span>🤝 Apoyo Comunitario</span>
               </div>
               <h3 className="text-sm font-black text-slate-900 dark:text-white">
                 ¿Te resultó útil Surtido CBO?
               </h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                Esta herramienta es gratuita y mantenida de forma independiente. Puedes apoyar su desarrollo invitándome un café.
+                Esta aplicación es gratuita e independiente. Si deseas apoyar su mantenimiento, puedes contribuir mediante Ko-fi o Binance Pay.
               </p>
             </div>
             
-            <a
-              href="https://ko-fi.com/rickky12"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 inline-flex items-center gap-2 bg-[#00b9fe] hover:bg-[#00a3e0] text-white font-black text-xs px-4 py-3 rounded-xl shadow-md active:scale-95 transition-all"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.458-4.018 4.069-4.018 4.069s-.112.119-.284.119c-.173 0-.285-.119-.285-.119s-2.771-2.611-4.018-4.069c-.913-1.068-.935-2.651.023-3.681.915-.983 2.443-.967 3.368.027l.912.98.912-.98c.925-.994 2.453-1.01 3.368-.027.958 1.03.936 2.613.022 3.681zm6.197 1.345c-.626 0-1.157-.041-1.157-.041V7.037h1.157c1.637 0 2.633 1.158 2.633 3.366 0 2.208-.996 3.401-2.633 3.401z"/>
-              </svg>
-              <span>Apoyar en Ko-fi</span>
-            </a>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              {/* Botón Ko-fi */}
+              <a
+                href="https://ko-fi.com/rickky12"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-[#00b9fe] hover:bg-[#00a3e0] text-white font-black text-xs px-4 py-3 rounded-xl shadow-sm active:scale-95 transition-all"
+              >
+                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                  <path d="M23.881 8.948c-.773-4.085-4.859-4.593-4.859-4.593H.723c-.604 0-.679.798-.679.798s-.082 7.324-.022 11.822c.164 2.424 2.586 2.672 2.586 2.672s8.267-.023 11.966-.049c2.438-.426 2.683-2.566 2.658-3.734 4.352.24 7.422-2.831 6.649-6.916zm-11.062 3.511c-1.246 1.458-4.018 4.069-4.018 4.069s-.112.119-.284.119c-.173 0-.285-.119-.285-.119s-2.771-2.611-4.018-4.069c-.913-1.068-.935-2.651.023-3.681.915-.983 2.443-.967 3.368.027l.912.98.912-.98c.925-.994 2.453-1.01 3.368-.027.958 1.03.936 2.613.022 3.681zm6.197 1.345c-.626 0-1.157-.041-1.157-.041V7.037h1.157c1.637 0 2.633 1.158 2.633 3.366 0 2.208-.996 3.401-2.633 3.401z"/>
+                </svg>
+                <span>Apoyar en Ko-fi</span>
+              </a>
+
+              {/* Botón Binance Pay (Copia ID 53539411) */}
+              <button
+                onClick={handleCopyBinanceId}
+                className="flex items-center justify-center gap-2 bg-[#FCD535] hover:bg-[#f0c929] text-slate-950 font-black text-xs px-4 py-3 rounded-xl shadow-sm active:scale-95 transition-all"
+              >
+                <svg className="w-4 h-4 fill-current shrink-0" viewBox="0 0 24 24">
+                  <path d="M16.624 13.9202l2.7175 2.7154-7.353 7.353-7.353-7.352 2.7175-2.7164 4.6355 4.6595 4.6356-4.6595zm4.6366-4.6366L24 12l-2.7154 2.7164L18.5682 12l2.6924-2.7164zm-9.272.001l2.7163 2.6914-2.7164 2.7174v-.001L9.2721 12l2.7164-2.7154zm-9.2722-.001L5.4088 12l-2.6914 2.6924L0 12l2.7164-2.7164zM11.9885.0115l7.353 7.329-2.7174 2.7154-4.6356-4.6356-4.6355 4.6595-2.7174-2.7154 7.353-7.353z"/>
+                </svg>
+                <span>
+                  {binanceCopied ? '¡ID Copiado: 53539411!' : 'Binance Pay: 53539411'}
+                </span>
+              </button>
+            </div>
           </div>
-          
+
           {/* 3. ESTACIONES DE SERVICIO SUBSIDIADAS */}
           <section className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
             
@@ -653,7 +679,7 @@ export default function App() {
             )}
           </section>
 
-          {/* SECCIÓN EDITORIAL DE ALTO VALOR (PARA APROBACIÓN DE ADSENSE) */}
+          {/* SECCIÓN EDITORIAL INFORMATIVA */}
           <section className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 space-y-4">
             <h2 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
               <span className="text-sky-500">ℹ️</span> Guía y Normas de Surtido en Ciudad Bolívar
