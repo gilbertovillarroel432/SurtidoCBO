@@ -548,16 +548,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* BLOQUE DE ANUNCIOS ADSENSE (UBICACIÓN PERMITIDA) */}
-          <div className="max-w-xl mx-auto bg-white/50 dark:bg-slate-900/50 p-2 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 text-center my-4 overflow-hidden min-h-[90px] flex items-center justify-center">
-            <ins className="adsbygoogle"
-                 style={{ display: 'block', width: '100%' }}
-                 data-ad-client="ca-pub-9793872818435027"
-                 data-ad-slot="auto"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-          </div>
-
           {/* 3. ESTACIONES DE SERVICIO SUBSIDIADAS */}
           <section className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
             
